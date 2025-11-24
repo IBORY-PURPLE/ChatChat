@@ -45,35 +45,36 @@ sourceSets {
     }
 }
 
-processResources { dependsOn "copyReactBuildFiles" }
 
-task installReact(type: Exec) {
-    workingDir "$frontendDir"
-    inputs.dir "$frontendDir"
+tasks.register("npmInstall", Exec) {
+    workingDir = file(frontendDir)
     group = BasePlugin.BUILD_GROUP
-    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine "npm.cmd", "audit", "fix"
-        commandLine 'npm.cmd', 'install'
+
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
+        commandLine "npm.cmd", "install"
     } else {
-        commandLine "npm", "audit", "fix"
-        commandLine 'npm', 'install'
+        commandLine "npm", "install"
     }
 }
 
-task buildReact(type: Exec) {
-    dependsOn "installReact"
-    workingDir "$frontendDir"
-    inputs.dir "$frontendDir"
+tasks.register("buildReact", Exec) {
+    dependsOn "npmInstall"
+    workingDir = file(frontendDir)
     group = BasePlugin.BUILD_GROUP
-    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine "npm.cmd", "run-script", "build"
+
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
+        commandLine "npm.cmd", "run", "build"   // vite build
     } else {
-        commandLine "npm", "run-script", "build"
+        commandLine "npm", "run", "build"
     }
 }
 
-task copyReactBuildFiles(type: Copy) {
+tasks.register("copyReactBuildFiles", Copy) {
     dependsOn "buildReact"
-    from "$frontendDir/build"
-    into "$projectDir/src/main/resources/static"
+    from "$frontendDir/dist"                     // ★ Vite 결과물 폴더
+    into "$projectDir/src/main/resources/static" // Spring 정적 리소스 위치
+}
+
+processResources {
+    dependsOn "copyReactBuildFiles"
 }
