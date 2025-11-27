@@ -16,8 +16,8 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
         try {
-            userService.signup(request.getUsername(), request.getPassword());
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            userService.signup(request.getUserID(), request.getPassword(), request.getName());
+            return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
         } catch (IllegalArgumentException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -30,7 +30,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
             LoginResponse response = userService.login(
-                    request.getUsername(),
+                    request.getUserID(),
                     request.getPassword()
             );
             return ResponseEntity.ok(response);

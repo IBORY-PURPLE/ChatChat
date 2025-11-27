@@ -1,0 +1,4 @@
+{
+  "server": "/api",
+  "wsServer": "ws://localhost:8080/ws"
+}

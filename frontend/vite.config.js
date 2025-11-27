@@ -1,9 +1,12 @@
 // vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+        tailwindcss()],
     server: {
         proxy: {
             // 백엔드 REST API가 /api 로 시작한다고 가정
